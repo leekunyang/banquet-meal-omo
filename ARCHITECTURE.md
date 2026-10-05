@@ -79,6 +79,34 @@
 1. **元件純展示**：`components/` 只負責畫面，不直接查詢 Supabase；資料透過 props 或 `lib/` 的函式取得。
 2. **Server / Client 邊界**：預設 Server Components；只有需要互動（購物車、表單）才加 `'use client'`。
 3. **金鑰隔離**：`SUPABASE_SERVICE_ROLE_KEY`、ECPay `HashKey` / `HashIV` 只能在 Server Actions 與 Route Handlers 使用，嚴禁出現在 Client Components 或 `NEXT_PUBLIC_*` 變數。
+4. **伺服器專用模組加上 `server-only` 防護**：`lib/supabase/server.ts`、`lib/ecpay/` 等只能在伺服器執行的檔案，第一行必須是 `import 'server-only';`。若被 Client Component 引入，build 時會直接報錯，避免金鑰或伺服器邏輯被打包進瀏覽器。
+
+### 為什麼預設使用 Server Components
+App Router 的元件預設就是 Server Component；本專案規定**只在需要互動時才加 `'use client'`**，原因如下：
+
+| 理由 | 說明 |
+| :--- | :--- |
+| 手機載入速度 | 賓客在喜宴現場以行動網路掃 QR code 進站，Server Component 不把元件程式碼送到瀏覽器，JS 體積小、首屏快 |
+| 安全 | 資料查詢與金鑰留在伺服器，呼應「價格以伺服器為準」與金鑰隔離原則 |
+| SEO | 商品名稱、價格、成分直接輸出在 HTML，搜尋引擎可完整索引 |
+| 程式簡潔 | 可直接 `await` 查詢資料庫，不需額外寫 API、`useEffect` 與 loading 狀態 |
+
+**需要 `'use client'` 的情況**：使用 React Hooks（`useState`、`useEffect`）、瀏覽器事件（`onClick`、`onChange`）或瀏覽器 API（`localStorage`、相機）。本專案中主要是購物車、加入購物車按鈕、結帳表單、門市 QR 核銷掃描器。
+
+**拆分方式**：頁面本身維持 Server Component 負責取資料，把需要互動的部分拆成小的 Client Component，以 props 傳入資料：
+
+```tsx
+// app/(shop)/products/[slug]/page.tsx — Server Component（預設）
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const product = await getProductBySlug(params.slug); // 在伺服器查詢
+  return (
+    <>
+      <ProductInfo product={product} />            {/* 純展示，留在伺服器 */}
+      <AddToCartButton productId={product.id} />   {/* 需要互動，檔案內宣告 'use client' */}
+    </>
+  );
+}
+```
 
 ---
 
