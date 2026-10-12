@@ -14,4 +14,7 @@ Next.js（App Router）· TypeScript · Tailwind CSS · shadcn/ui · Supabase ·
 | [.github/skills/scaffold-feature](.github/skills/scaffold-feature/SKILL.md) | 新功能模組的建立流程 |
 | [.github/skills/supabase-migration](.github/skills/supabase-migration/SKILL.md) | 資料表、RLS 與庫存函式的異動流程 |
 | [.github/skills/pr-preflight](.github/skills/pr-preflight/SKILL.md) | 推送與發 PR 前的檢查 |
+| [.github/skills/dish-to-product](.github/skills/dish-to-product/SKILL.md) | 把菜色資料 / 包裝標示照片整理成 `data/products.json` 商品紀錄 |
+| [.github/agents/product-copywriter.agent.md](.github/agents/product-copywriter.agent.md) | 自訂 Agent：依商品紀錄撰寫商品頁文案與食品標示 |
+| [docs/PRD.md](docs/PRD.md) | 產品需求文件：問題、Persona、User Stories 與驗收條件、成功指標、MVP 範圍 |
 | [.env.example](.env.example) | 環境變數範本 |

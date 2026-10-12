@@ -41,6 +41,14 @@
 ## 3. 目錄結構
 
 ```
+├── .github/
+│   ├── copilot-instructions.md    # 專案憲法（10 行內）
+│   ├── skills/<name>/SKILL.md     # Agent Skills：所有 agent 共用的 SOP
+│   └── agents/<name>.agent.md     # 自訂 Agent：專屬角色（如 product-copywriter）
+├── docs/
+│   └── PRD.md                     # 產品需求文件
+├── data/
+│   └── products.json              # 商品資料草稿（建立資料庫前由 dish-to-product skill 維護）
 ├── app/
 │   ├── (shop)/                    # 前台：首頁、商品列表、商品頁、購物車、結帳
 │   │   ├── products/[slug]/
