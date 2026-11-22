@@ -1,0 +1,80 @@
+@import 'tailwindcss';
+
+/* Design tokens (ARCHITECTURE §6). Primary red passes WCAG AA on white (6.5:1);
+   gold is decoration only, never text. */
+:root {
+  --background: #fbf7f0;
+  --foreground: #231f1c;
+  --card: #ffffff;
+  --muted: #5f5650;
+  --border: #e7ded3;
+  --input: #cfc4b7;
+  --primary: #b4232a;
+  --primary-hover: #8e1b21;
+  --primary-soft: #fbedee;
+  --primary-line: #e8b4b7;
+  --accent: #b8892d;
+  --success: #1f7a4d;
+  --success-soft: #e3f2ea;
+  --warning: #7a5300;
+  --warning-soft: #fff4d6;
+  --subtle: #f3efea;
+  --radius: 12px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-line: var(--primary-line);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-subtle: var(--subtle);
+  --radius-card: var(--radius);
+  --font-sans: 'Noto Sans TC', system-ui, -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --font-serif: 'Noto Serif TC', 'Songti TC', serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 3px solid var(--primary-line);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
