@@ -1,7 +1,7 @@
 import 'server-only';
 import { dataMode } from '@/lib/env';
 import { memoryRepo } from './memory';
-import { supabaseRepo } from './supabase';
+import { supabaseRepo } from './supabase/repo';
 import type { Repo } from './repo';
 
 export function getRepo(): Repo {

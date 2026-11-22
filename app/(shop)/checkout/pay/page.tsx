@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getRepo } from '@/lib/data';
 import { getSession } from '@/lib/auth/session';
 import { isDemo } from '@/lib/env';
-import { buildCheckoutForm } from '@/lib/ecpay/payment';
+import { buildCheckoutForm } from '@/lib/payments/ecpay/payment';
 import { formatDateTime, formatTWD } from '@/lib/utils';
 import { simulatePayment } from '@/app/actions/demo';
 import { Card } from '@/components/ui/card';

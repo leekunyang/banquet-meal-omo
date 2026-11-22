@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeCheckMacValue, ecpayUrlEncode, verifyCheckMacValue } from '@/lib/ecpay/checkmac';
+import { computeCheckMacValue, ecpayUrlEncode, verifyCheckMacValue } from '@/lib/payments/ecpay/checkmac';
 
 // Example from ECPay's All-In-One API documentation (stage merchant 3002607).
 const HASH_KEY = 'pwFHCqoQZGmho4w6';

@@ -3,7 +3,7 @@ import { useActionState, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { Fulfillment, PaymentMethod } from '@/types/domain';
 import { createOrder, type CheckoutState } from '@/app/actions/orders';
-import { computeQuote, PRICING_RULES } from '@/lib/pricing';
+import { computeQuote, PRICING_RULES } from '@/lib/orders/pricing';
 import { cn, formatTWD } from '@/lib/utils';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Input, Label, Select } from '@/components/ui/field';

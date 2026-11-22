@@ -1,6 +1,6 @@
 ---
 name: scaffold-feature
-description: Scaffold a feature module (route, components, lib logic, types, tests) following the Next.js App Router + Supabase structure in ARCHITECTURE.md.
+description: Scaffold a feature module (route, components, lib logic, types, tests) following the Next.js App Router + Supabase structure in docs/ARCHITECTURE.md.
 ---
 
 # Feature Module Scaffolding Workflow
@@ -15,7 +15,7 @@ description: Scaffold a feature module (route, components, lib logic, types, tes
    - `lib/<feature_name>/` for business logic and Supabase queries.
    - `types/<feature_name>.ts` for interfaces (derive row types from `types/database.ts`).
 2. **UI:** reuse `@/components/ui/*`; add missing primitives with `npx shadcn@latest add <component>`. Components receive data via props only. All visible text in zh-TW.
-3. **Data:** read via `lib/supabase/server.ts` in Server Components; mutate via Server Actions in `app/actions/`. Never import the service-role client into client code.
+3. **Data:** read via `lib/data/supabase/server.ts` in Server Components; mutate via Server Actions in `app/actions/`. Never import the service-role client into client code.
 4. **Schema changes:** if new tables or columns are needed, follow the `supabase-migration` skill.
 5. **Tests:** create `tests/unit/<feature_name>.test.ts` and `tests/e2e/<feature_name>.spec.ts` skeletons.
 

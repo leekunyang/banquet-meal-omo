@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { verifyNotification } from '@/lib/ecpay/payment';
+import { verifyNotification } from '@/lib/payments/ecpay/payment';
 import { applyPaymentResult } from '@/lib/payments/handle';
 
 /**

@@ -40,58 +40,80 @@
 
 ## 3. 目錄結構
 
+根目錄只放 Next.js 與工具規定的設定檔（`package.json`、`tsconfig.json`、`next.config.ts`、`middleware.ts`、`eslint.config.mjs`、`vitest.config.mts`、`playwright.config.ts`、`postcss.config.mjs`、`vercel.json`、`.env.example`）與 `README.md`；其他內容依下表分類。
+
 ```
 ├── .github/
 │   ├── copilot-instructions.md    # 專案憲法（10 行內）
+│   ├── CODEOWNERS                 # 目錄負責人（與 docs/TEAM.md 一致）
+│   ├── workflows/ci.yml           # CI：lint、型別、單元、build、E2E、pgTAP
 │   ├── skills/<name>/SKILL.md     # Agent Skills：所有 agent 共用的 SOP
 │   └── agents/<name>.agent.md     # 自訂 Agent：專屬角色（如 product-copywriter）
 ├── docs/
-│   └── PRD.md                     # 產品需求文件
+│   ├── ARCHITECTURE.md            # 本檔：架構、目錄、資料模型、領域規則
+│   ├── PRD.md                     # 產品需求文件
+│   └── TEAM.md                    # 分工與目錄對應
 ├── data/
-│   └── products.json              # 商品資料草稿（建立資料庫前由 dish-to-product skill 維護）
-├── app/
-│   ├── (shop)/                    # 前台：首頁、商品列表、商品頁、購物車、結帳
-│   │   ├── products/[slug]/
-│   │   ├── cart/
-│   │   └── checkout/
+│   └── products.json              # 商品資料草稿（由 dish-to-product skill 維護，不是程式碼）
+│
+├── app/                           # 路由（頁面、Server Actions、Route Handlers）
+│   ├── (shop)/                    # 前台：首頁、商品、購物車、結帳、付款、登入
 │   ├── (account)/                 # 會員中心：訂單、點數、取貨 QR code
-│   ├── e/[eventId]/               # 喜宴 QR code 落地頁（記錄來源宴席與限定優惠）
-│   ├── store/                     # 門市 POS 與自取核銷（限門市人員）
-│   ├── admin/                     # 後台：商品、庫存、訂單、宴席活動、報表（限管理者）
+│   ├── e/[eventId]/               # 喜宴桌卡 QR 落地頁（記錄來源宴席與限定優惠）
+│   ├── store/                     # 門市自取核銷與 POS（限門市人員）
+│   ├── admin/                     # 後台：商品、庫存、訂單、宴席活動（限管理者）
 │   ├── api/
-│   │   └── ecpay/notify/          # 綠界付款結果回呼（Route Handler）
-│   ├── actions/                   # Server Actions（下單、核銷、調整庫存）
+│   │   ├── ecpay/notify/          # 綠界付款結果回呼
+│   │   └── cron/expire-orders/    # 逾時未付款訂單釋放庫存
+│   ├── actions/                   # Server Actions（依領域分檔：orders、cart、store、admin、auth、demo）
 │   ├── layout.tsx
 │   └── globals.css                # Tailwind 與 CSS 變數（Design Tokens）
-├── components/
-│   ├── ui/                        # shadcn/ui 元件（CLI 安裝）
-│   ├── common/                    # Header、Footer、購物車抽屜
-│   └── features/[feature]/        # 依功能分類的展示元件（純展示）
-├── lib/
-│   ├── supabase/
-│   │   ├── client.ts              # 瀏覽器端 client（anon key）
-│   │   └── server.ts              # 伺服器端 client（cookie session / service role）
-│   ├── ecpay/                     # 金流參數組合與 CheckMacValue 驗證
-│   ├── [feature]/                 # 商業邏輯與資料存取（cart、orders、inventory、loyalty…）
+├── components/                    # 純展示元件，不直接存取資料
+│   ├── ui/                        # 基礎元件（button、card、badge、field、notice）
+│   ├── common/                    # 跨頁共用（頁首、底部分頁列、QR code、空狀態）
+│   └── features/<feature>/        # 依功能分類（account、admin、catalog、checkout、store）
+├── lib/                           # 商業邏輯與資料存取，依領域分資料夾
+│   ├── data/                      # 資料存取層：getRepo() 依環境切換實作
+│   │   ├── index.ts               #   getRepo()
+│   │   ├── repo.ts                #   Repo 介面（兩種實作的共同合約）
+│   │   ├── memory.ts、seed.ts     #   展示模式：記憶體實作與示範資料
+│   │   └── supabase/              #   正式模式
+│   │       ├── repo.ts            #     Supabase 版 Repo（寫入都呼叫 DB function）
+│   │       ├── server.ts          #     伺服器端 client（cookie session / service role）
+│   │       └── client.ts          #     瀏覽器端 client（anon key）
+│   ├── orders/
+│   │   ├── pricing.ts             #   金額、運費、優惠、點數規則（與 SQL 同步）
+│   │   └── status.ts              #   訂單狀態文字、顏色、時間軸
+│   ├── payments/
+│   │   ├── handle.ts              #   套用付款結果（冪等）
+│   │   └── ecpay/                 #   綠界：付款表單組合、CheckMacValue 簽章與驗證
+│   ├── auth/                      # 登入 session 與角色檢查
+│   ├── cart/                      # 購物車 cookie
+│   ├── events/                    # 喜宴活動：目前宴席、限定優惠規則
+│   ├── products/                  # 食品標示欄位檢查
+│   ├── env.ts                     # 環境變數與展示模式判斷
 │   └── utils.ts                   # cn()、formatTWD() 等共用函式
-├── types/                         # 資料模型（含 supabase gen types 產生的 database.ts）
+├── types/                         # 資料模型（domain.ts）與跨領域合約（contracts.ts）
+│
 ├── supabase/
 │   ├── migrations/                # 資料表、RLS、DB functions 的 SQL migration
 │   ├── seed.sql                   # 測試資料
 │   └── tests/database/            # pgTAP（RLS、防超賣、回呼冪等）
 └── tests/
     ├── unit/                      # Vitest
-    └── e2e/                       # Playwright
+    └── e2e/                       # Playwright（375px 手機）
 ```
 
+> `supabase/`（根目錄）是資料庫本身（SQL）；`lib/data/supabase/` 是網站連線到資料庫的程式。兩者用途不同。
+
 ### 資料存取層
-所有頁面與 Server Action 透過 `lib/data` 的 `getRepo()` 存取資料。有 Supabase 金鑰時使用 `lib/data/supabase.ts`（每個寫入都呼叫上表的 DB function）；沒有時使用 `lib/data/memory.ts` 展示模式，以相同規則在記憶體中模擬，讓沒有 Docker 的組員也能 `npm run dev` 展示。金額規則集中在 `lib/pricing.ts`，與 SQL 同步修改。
+所有頁面與 Server Action 透過 `lib/data` 的 `getRepo()` 存取資料。有 Supabase 金鑰時使用 `lib/data/supabase/repo.ts`（每個寫入都呼叫上表的 DB function）；沒有時使用 `lib/data/memory.ts` 展示模式，以相同規則在記憶體中模擬，讓沒有 Docker 的組員也能 `npm run dev` 展示。金額規則集中在 `lib/orders/pricing.ts`，與 SQL 同步修改。
 
 ### 架構原則
 1. **元件純展示**：`components/` 只負責畫面，不直接查詢 Supabase；資料透過 props 或 `lib/` 的函式取得。
 2. **Server / Client 邊界**：預設 Server Components；只有需要互動（購物車、表單）才加 `'use client'`。
 3. **金鑰隔離**：`SUPABASE_SERVICE_ROLE_KEY`、ECPay `HashKey` / `HashIV` 只能在 Server Actions 與 Route Handlers 使用，嚴禁出現在 Client Components 或 `NEXT_PUBLIC_*` 變數。
-4. **伺服器專用模組加上 `server-only` 防護**：`lib/supabase/server.ts`、`lib/ecpay/` 等只能在伺服器執行的檔案，第一行必須是 `import 'server-only';`。若被 Client Component 引入，build 時會直接報錯，避免金鑰或伺服器邏輯被打包進瀏覽器。
+4. **伺服器專用模組加上 `server-only` 防護**：`lib/data/supabase/server.ts`、`lib/payments/ecpay/payment.ts` 等只能在伺服器執行的檔案，第一行必須是 `import 'server-only';`。若被 Client Component 引入，build 時會直接報錯，避免金鑰或伺服器邏輯被打包進瀏覽器。
 
 ### 為什麼預設使用 Server Components
 App Router 的元件預設就是 Server Component；本專案規定**只在需要互動時才加 `'use client'`**，原因如下：

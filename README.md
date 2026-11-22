@@ -48,7 +48,7 @@ npm run db:types              # 產生 types/database.ts
 | 檔案 | 用途 |
 | :--- | :--- |
 | [.github/copilot-instructions.md](.github/copilot-instructions.md) | 專案憲法：每次與 Copilot 對話都會送出的精簡規則（10 行內） |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | 使用者情境、技術堆疊、目錄結構、資料模型、領域鐵律、測試與用語規範 |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | 使用者情境、技術堆疊、目錄結構、資料模型、領域鐵律、測試與用語規範 |
 | [.github/skills/qa-workflow](.github/skills/qa-workflow/SKILL.md) | Lint、單元測試、E2E 測試與修正流程 |
 | [.github/skills/scaffold-feature](.github/skills/scaffold-feature/SKILL.md) | 新功能模組的建立流程 |
 | [.github/skills/supabase-migration](.github/skills/supabase-migration/SKILL.md) | 資料表、RLS 與庫存函式的異動流程 |

@@ -22,7 +22,7 @@ export async function createServerSupabase(): Promise<SupabaseClient> {
 
 /**
  * Service-role client: bypasses RLS. Only for the ECPay notify Route Handler
- * and the expiry cron (ARCHITECTURE.md §3, principle 3).
+ * and the expiry cron (docs/ARCHITECTURE.md §3, principle 3).
  */
 export function createServiceSupabase(): SupabaseClient {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

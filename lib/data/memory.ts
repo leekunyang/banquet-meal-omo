@@ -14,7 +14,7 @@ import type {
   StockAdjustment,
 } from '@/types/domain';
 import type { CartLine, CommitResult, CreateOrderInput, CreateOrderResult, PaymentNotification, RedeemResult } from '@/types/contracts';
-import { computeQuote, PAYMENT_HOLD_MINUTES, pointsEarnedFor } from '@/lib/pricing';
+import { computeQuote, PAYMENT_HOLD_MINUTES, pointsEarnedFor } from '@/lib/orders/pricing';
 import { eventDiscount } from '@/lib/events/rules';
 import { isLabelComplete } from '@/lib/products/label';
 import { DEMO_MEMBERS, SEED_LOCATIONS, SEED_PRODUCTS, STORE_ID, WAREHOUSE_ID, seedEvents, seedLots } from './seed';
