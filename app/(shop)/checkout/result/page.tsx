@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getRepo } from '@/lib/data';
 import { getSession } from '@/lib/auth/session';
 import { formatDateTime, formatTWD, maskPhone } from '@/lib/utils';
-import { pointsEarnedFor } from '@/lib/pricing';
+import { pointsEarnedFor } from '@/lib/orders/pricing';
 import { Card } from '@/components/ui/card';
 import { buttonClass } from '@/components/ui/button';
 import { IconCheck, IconClock, IconX } from '@/components/common/icons';

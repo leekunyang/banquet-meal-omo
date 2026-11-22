@@ -3,14 +3,12 @@
 
 # 產品規格與脈絡架構師：楊承穎
 /docs/                          @ARCHITECT
-/ARCHITECTURE.md                @ARCHITECT
 /.github/copilot-instructions.md @ARCHITECT
 /types/                         @ARCHITECT
 /supabase/migrations/           @ARCHITECT
 
 # 領域 A：交易與庫存（黃鳴翌）
-/lib/pricing.ts                 @DOMAIN_A
-/lib/ecpay/                     @DOMAIN_A
+/lib/orders/                    @DOMAIN_A
 /lib/payments/                  @DOMAIN_A
 /app/(shop)/products/           @DOMAIN_A
 /app/(shop)/cart/               @DOMAIN_A

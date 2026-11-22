@@ -5,7 +5,7 @@ import { cache } from 'react';
 import type { Member, Role } from '@/types/domain';
 import { dataMode } from '@/lib/env';
 import { getRepo } from '@/lib/data';
-import { createServerSupabase } from '@/lib/supabase/server';
+import { createServerSupabase } from '@/lib/data/supabase/server';
 
 export const DEMO_SESSION_COOKIE = 'demo_member';
 

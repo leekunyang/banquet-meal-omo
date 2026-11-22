@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeQuote } from '@/lib/pricing';
+import { computeQuote } from '@/lib/orders/pricing';
 import { formatTWD } from '@/lib/utils';
 
 const base = { eventDiscount: 0, pointsBalance: 0, usePoints: false } as const;

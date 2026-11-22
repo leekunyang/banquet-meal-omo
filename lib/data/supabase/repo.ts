@@ -14,8 +14,8 @@ import type {
   StockAdjustment,
 } from '@/types/domain';
 import type { CommitResult, CreateOrderResult, RedeemResult } from '@/types/contracts';
-import { createServerSupabase, createServiceSupabase } from '@/lib/supabase/server';
-import type { AdminOrderRow, EventStats, Repo } from './repo';
+import { createServerSupabase, createServiceSupabase } from '@/lib/data/supabase/server';
+import type { AdminOrderRow, EventStats, Repo } from '../repo';
 
 type Row = Record<string, unknown>;
 

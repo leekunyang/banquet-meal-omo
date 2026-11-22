@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { dataMode } from '@/lib/env';
 import { DEMO_SESSION_COOKIE } from '@/lib/auth/session';
 import { demoUpsertMember } from '@/lib/data/memory';
-import { createServerSupabase } from '@/lib/supabase/server';
+import { createServerSupabase } from '@/lib/data/supabase/server';
 import { maskPhone, normalizeTwPhone, toE164 } from '@/lib/utils';
 
 export type OtpState =
