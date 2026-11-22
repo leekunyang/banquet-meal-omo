@@ -77,11 +77,15 @@
 ├── types/                         # 資料模型（含 supabase gen types 產生的 database.ts）
 ├── supabase/
 │   ├── migrations/                # 資料表、RLS、DB functions 的 SQL migration
-│   └── seed.sql                   # 測試資料
+│   ├── seed.sql                   # 測試資料
+│   └── tests/database/            # pgTAP（RLS、防超賣、回呼冪等）
 └── tests/
     ├── unit/                      # Vitest
     └── e2e/                       # Playwright
 ```
+
+### 資料存取層
+所有頁面與 Server Action 透過 `lib/data` 的 `getRepo()` 存取資料。有 Supabase 金鑰時使用 `lib/data/supabase.ts`（每個寫入都呼叫上表的 DB function）；沒有時使用 `lib/data/memory.ts` 展示模式，以相同規則在記憶體中模擬，讓沒有 Docker 的組員也能 `npm run dev` 展示。金額規則集中在 `lib/pricing.ts`，與 SQL 同步修改。
 
 ### 架構原則
 1. **元件純展示**：`components/` 只負責畫面，不直接查詢 Supabase；資料透過 props 或 `lib/` 的函式取得。
@@ -130,6 +134,25 @@ export default async function ProductPage({ params }: { params: { slug: string }
 | `order_items` | `order_id`、`product_id`、`qty`、`unit_price` | 下單當下的價格快照 |
 | `events` | `id`、`venue`、`couple_name`、`event_date`、`coupon_code` | 喜宴場次，對應桌卡 QR code |
 | `point_ledger` | `member_id`、`order_id`、`delta`、`reason` | 點數異動紀錄（不可直接改 `members.points`） |
+| `stock_reservations` | `order_id`、`lot_id`、`qty` | 待付款訂單保留的批號數量；付款成功轉扣除、逾時刪除 |
+| `payments` | `merchant_trade_no`（PK）、`order_id`、`rtn_code`、`trade_amount`、`raw` | 綠界通知紀錄；以主鍵確保同一筆通知只處理一次 |
+| `notifications` | `member_id`、`kind`、`order_id`、`read_at` | 站內通知（付款成功、可取貨、已出貨） |
+| `stock_adjustments` | `lot_id`、`delta`、`reason`、`actor_id` | 管理者手動調整庫存的紀錄（原因必填） |
+
+補充欄位：`members.role`（`customer` / `staff` / `admin`）、`orders.number`（同時作為綠界 `MerchantTradeNo`）、`orders.payment_method`、`orders.points_used`、`orders.pickup_location_id`、`orders.pickup_token`、`orders.picked_up_at`、`orders.expires_at`、`events.discount_amount`、`events.valid_until`、`events.featured_slugs`。
+
+### DB functions（`supabase/migrations/20261122000300_functions.sql`）
+| Function | 呼叫者 | 用途 |
+| :--- | :--- | :--- |
+| `place_order` | 會員（Server Action `createOrder`） | 重算金額、套用宴席優惠與點數、依 FEFO 保留庫存、建立 `pending_payment` 訂單 |
+| `commit_payment` | service role（`/api/ecpay/notify`） | 冪等；保留轉扣除、狀態改為 `paid`／`ready_for_pickup`、產生取貨碼、累點、通知 |
+| `release_expired` | service role（Vercel Cron） | 取消逾時訂單、釋放保留、退回折抵點數 |
+| `redeem_pickup` | 門市人員 | 查詢或核銷取貨碼；已取貨回報時間，不重複扣庫存 |
+| `pos_sale` | 門市人員 | 現場銷售，直接扣門市庫存並累點 |
+| `adjust_stock`、`advance_order` | 管理者 | 調整庫存（留紀錄）、推進宅配狀態 |
+| `product_availability` | 所有人 | 各商品各地點可售數量（不揭露批號） |
+
+付款期限：信用卡保留 30 分鐘；ATM／超商代碼保留 3 天（對應繳費期限）。宅配從 `wh-main` 倉庫出貨，門市自取保留 `st-hall` 門市冷凍櫃的庫存。
 
 ### 訂單狀態流程
 ```
@@ -143,7 +166,7 @@ paid → refunded
 
 ## 5. 領域鐵律（Domain Rules）
 1. **金額一律整數**：新台幣沒有小數，所有金額以 `integer` 儲存與計算，嚴禁浮點數；顯示時用 `formatTWD()`。
-2. **庫存只能透過 DB function 異動**：下單時呼叫 `reserve_stock()`，付款成功呼叫 `commit_stock()`，逾時呼叫 `release_stock()`；全部在 Postgres transaction 內執行，防止超賣。
+2. **庫存只能透過 DB function 異動**：下單時呼叫 `place_order()`（保留），付款成功呼叫 `commit_payment()`（扣除），逾時呼叫 `release_expired()`（釋放）；全部在 Postgres transaction 內以 `SELECT … FOR UPDATE` 鎖列執行，防止超賣。
 3. **價格以伺服器為準**：結帳時由伺服器重新計算金額，絕不採信前端傳來的價格。
 4. **付款結果以綠界回呼為準**：`/api/ecpay/notify` 必須驗證 `CheckMacValue`，且需冪等（同一筆通知重複送達只處理一次）。
 5. **冷凍配送限制**：調理包只能選冷凍宅配或門市自取，不提供常溫超商取貨。

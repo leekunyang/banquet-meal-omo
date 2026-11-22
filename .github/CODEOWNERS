@@ -1,0 +1,38 @@
+# Mirrors docs/TEAM.md. Replace the display names with GitHub usernames
+# (e.g. @rex941028) before enabling "Require review from Code Owners".
+
+# 產品規格與脈絡架構師：楊承穎
+/docs/                          @ARCHITECT
+/ARCHITECTURE.md                @ARCHITECT
+/.github/copilot-instructions.md @ARCHITECT
+/types/                         @ARCHITECT
+/supabase/migrations/           @ARCHITECT
+
+# 領域 A：交易與庫存（黃鳴翌）
+/lib/pricing.ts                 @DOMAIN_A
+/lib/ecpay/                     @DOMAIN_A
+/lib/payments/                  @DOMAIN_A
+/app/(shop)/products/           @DOMAIN_A
+/app/(shop)/cart/               @DOMAIN_A
+/app/(shop)/checkout/           @DOMAIN_A
+/app/api/                       @DOMAIN_A
+/app/admin/products/            @DOMAIN_A
+/app/admin/inventory/           @DOMAIN_A
+/app/admin/orders/              @DOMAIN_A
+
+# 領域 B：會員與現場 OMO（陳宇澔）
+/app/(account)/                 @DOMAIN_B
+/app/(shop)/login/              @DOMAIN_B
+/app/e/                         @DOMAIN_B
+/app/store/                     @DOMAIN_B
+/app/admin/events/              @DOMAIN_B
+/lib/auth/                      @DOMAIN_B
+/lib/events/                    @DOMAIN_B
+
+# 系統整合與體驗防禦者：李昆陽
+/tests/e2e/                     @GUARDIAN
+/supabase/tests/                @GUARDIAN
+/.github/workflows/             @GUARDIAN
+/app/globals.css                @GUARDIAN
+/components/ui/                 @GUARDIAN
+/components/common/             @GUARDIAN
